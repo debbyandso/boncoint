@@ -39,44 +39,6 @@
 @endif 
 </div>
 
- {{-- b:guest , ca permet de creer un endroit où on peut mettre html, ici, mettre 
-    le form pour que les gens se connectent, pour les guest! c'est propre a laravel --}}
-    @guest
-
-    <h1>Vos informations</h1>
-    <hr> 
-    <div class="form-group">
-            <label for="name"  >Votre nom</label>
-    <input type="text" class="form-control {{$errors->has('name') ? 'is-invalid':''}} " id="name" name="name ">
-    @if ($errors->has('name'))
-    <div class="span invalid-feedback"> {{$errors ->first('name') }} </div>
-    @endif 
-    </div> 
-   
-    <div class="form-group">
-            <label for="email"  >Votre Email</label>
-    <input type="text" class="form-control {{$errors->has('email') ? 'is-invalid':''}} " id="email" name="email ">
-    @if ($errors->has('email'))
-    <div class="span invalid-feedback"> Veuillez inserer votre mail</div>
-    @endif 
-    </div> 
-    <div class="form-group">
-            <label for="password"  >Mot de passe</label>
-    <input type="password" class="form-control {{$errors->has('password') ? 'is-invalid':''}} " id="password" name="password ">
-    @if ($errors->has('password'))
-    <div class="span invalid-feedback"> Veuillez inserer un mot de passe</div>
-    @endif 
-    </div> 
-{{-- les messages errors sont toujours dans la classe --}}
-<div class="form-group">
-        <label for="password_confirmation"  >Confirmer votre Mot de passe</label>
-<input type="password" class="form-control {{$errors->has('password_confirmation') ? 'is-invalid':''}} " id="password_confirmation" name="password_confirmation ">
-@if ($errors->has('password_confirmation'))
-<div class="span invalid-feedback"> Veuillez confirmer votre mot de passe</div>
-@endif 
-</div> 
-   
-  @endguest
   
     <button type="submit" class="btn btn-primary">Soumettre notre annonce</button>
   </form>

@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Http\Request;
 // on importe le request adstore
 use App\Http\Requests\AdStore;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -18,6 +19,17 @@ class Adcontroller extends Controller
     use RegistersUsers;
     //connection new utilisateurs qui vient de s'inscrire pour creer ad
     // il faut importer use
+    public function index(){
+        //on recupere nos annonce qu'on insere dans la variables
+        //ads et on apelle la DBet recupere la table ads et created at ordre decroissant
+        // pas oublier d'importer la facade DB
+        $ads = DB::table('ads')->orderBy('created_at', 'DESC')->paginate(1);
+        // on recupere sur 5 ads par page/ 1 pour l'exemple
+        //pagination se lit avec une ligne dans le blade!
+        return view('ads', compact('ads'));
+        //le nom de la view= ads et on utilise la function compact pour envoyer
+        // la variable ads à l'intereiru de la view
+    }
     public function create(){
         return view('create');
         //create.blade.php
@@ -34,47 +46,7 @@ class Adcontroller extends Controller
         //cette variable permet de recuperer tous les données qque les utilisateurs ont mis dans le form
     //si je fais un dd($validated), je peux voir toutes les données tapees dans le form
     // deuxiemement, on a va utiliser notre model Add= $add= new Ad()
-    if(!Auth::check()){
-        // ici on fait la condition pour quand on est pas connecté, on
-        //ait un truc qui apparait et dans ce cas, on va dans creae.blade
-        // pour mettre ce message
-        $request-> validate([
-            //objet request et fonction validate où on fait passer
-            //voir doc validation
-            // on la fait comme ca pour nous montrer qu'on peut le faire ici ou soit
-            //sur le model
-            'name' =>'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' =>'required|confirmed',
-            'password_confirmation' =>'required',
-
-        ]);
-        // nous sommes dans la cas où le new utilisateur a rempli la fiche
-        // donc, on le crée maintenant
-       $user= User::create([
-           //on stocke dans une variable user car quand ce sera créer, ca va nous renvoyer
-           //un user
-            //on importe user
-            'name' =>$request['name'],
-            'email' => $request['email'],
-            'password' => Hash::make($request['password']),
-            // on fait passser une facade Hash pour que quand on aille dns la base de donnes
-            // on voit pas le mot de pase, c'est cripté
-            //on importe hash
-        ]);
-       //derniere fonction: connecté l'utilisateur fraichement créer grace a id
-       // va dans regirster controller de AUth et cherche function
-    //    public function register(Request $request)
-    // {
-    //     $this->validator($request->all())->validate();/ valide les infos
-
-    //     $this->guard()->login($this->create($request->all()));/connecte le user
-
-    //     return redirect($this->redirectPath());
-    // }
-    $this->guard()->login($this->create($request->all()));
-// dans ma clase, je dois rajoute le use RegisterUsers;
-    }
+   
     
     $ad= new Ad();
         // on doit importer notre model au dessus!
@@ -83,7 +55,6 @@ class Adcontroller extends Controller
     $ad->description = $validated['description'];
     $ad->localisation = $validated['localisation'];
     $ad->price = $validated['price'];
-    $ad->user_id = auth()->user()->id;
     // ca permet d'asocier l'annonce avec utilisateur grace a l'utilisateur id!
     $ad->save();
     //save permet de sauvagarder informations et les persister dans la base de données
@@ -93,5 +64,25 @@ class Adcontroller extends Controller
 
 
     //= tu vas remplacer le title par le title soumis par le client!
+    }
+public function search(Request $request){
+// ici, le search fonctionne +axios
+// on abesoin de la requete du truc axios
+$word=$request->word;
+// ca stocke les mots de la recherche de l'utilisatuer
+$ads= DB::table('ads')
+->where('title','LIKE','%word%')
+// pour recupere les add dans le titres
+->orWhere('description', 'LIKE', '%word%')
+// pour recupere les add dans le description
+->orderBy('created_at', 'DESC')
+//poste par ordre decroissant
+->get();
+
+return response()->json(['success'=> true,'ads'=> $ads]);
+//c'est du javascript, on veut envoyer une reponse en json
+// on recuepere l annonce avec ads
+// dans ma console, je suis censée voir sata
+
     }
 }

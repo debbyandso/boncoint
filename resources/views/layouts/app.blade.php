@@ -36,6 +36,9 @@
     <li class="nav-item">
     <a href='{{route('ad.create')}}'class="nav-link">Ajouter une annonce </a>
     </li>
+    <li class="nav-item">
+        <a href='{{route('ad.index')}}'class="nav-link">Recherchez une annonce </a>
+        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -78,5 +81,6 @@
             @yield('content')
         </main>
     </div>
+    @yield('extra-js')
 </body>
 </html>
